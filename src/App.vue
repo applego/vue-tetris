@@ -10,7 +10,16 @@
     </p>
     <input type="text" v-model="msg">
     <button @click="clear()">clear</button>
-    <p>
+    <p>button ver.</p>
+    <input type="text" v-model="poscode">
+    <button @click="clear_pos()">clear</button>
+    <button @click="showcity()">show city</button>
+    <p v-if="poscode.length > 0">
+      {{city}}
+    </p>
+    <p v-else>
+      no text
+    </p>
   </div>
 </template>
 
@@ -23,12 +32,30 @@ export default {
   },
   data(){
     return{
-      msg:'Hello World!'
+      msg:'Hello World!',
+      poscode:'10504',
+      city:''
     }
   },
   methods:{
     clear(){
       this.msg = ''
+    },
+    clear_pos(){
+      this.poscode = ''
+    },
+    showcity(){
+      var url = 'http://www.geonames.org/postalCodeLookupJSON?postalcode='+this.poscode+'&country=US';
+      fetch(url)
+      .then(response=>{
+        return response.json()
+      })
+      .then(json=>{
+        this.city = json.postalcodes[0].adminName1
+      })
+      .catch((err)=>{
+        this.city = err //エラー処理
+      });
     }
   },
   created(){
